@@ -1,0 +1,39 @@
+<main>
+  <navbar-dir></navbar-dir>
+
+  <div class="product-card-container">
+
+    <div class="product-card" id="admin" ng-repeat="product in products">
+      <div class="product-card-info">
+        <img ng-src="{{ product.image }}"></img> <br/>
+        {{ product.name }} <br/>
+        {{ product.description }} <br/>
+        ${{ product.price }}
+      </div>
+      <div class="button-container">
+        <button type="button" ng-click="showEdit = !showEdit">Edit Item</button>
+        <form class="edit-product" ng-submit="updateProductById(product)">
+          <input type="text" placeholder="{{product.image}}" ng-model="product.image" ng-show="showEdit">
+          <input type="text" placeholder="{{product.name}}" ng-model="product.name" ng-show="showEdit">
+          <input type="text" placeholder="{{product.description}}" ng-model="product.description" ng-show="showEdit">
+          <input type="text" placeholder="{{product.price}}" ng-model="product.price" ng-show="showEdit">
+          <button type="submit" ng-show="showEdit" ng-click="showEdit = false">Submit</button>
+        </form>
+        <button type="button" ng-click="deleteProductById(product)">Delete Item</button>
+      </div>
+    </div>
+
+    <div class="add-item-card">
+        <div class="add-item-button vertical" ng-show="!showCreate" ng-click="showCreate = !showCreate"></div>
+        <form class="edit-product vertical" ng-submit="addProducts(product)">
+          <input type="text" placeholder="Image" ng-model="product.image" ng-show="showCreate">
+          <input type="text" placeholder="Name" ng-model="product.name" ng-show="showCreate">
+          <input type="text" placeholder="Description" ng-model="product.description" ng-show="showCreate">
+          <input type="text" placeholder="Price" ng-model="product.price" ng-show="showCreate">
+          <button class="item-button" type="submit" ng-show="showCreate" ng-click="showCreate = false">Create</button>
+          <button class="item-button" type="button" ng-show="showCreate" ng-click="showCreate = false">Cancel</button>
+        </form>
+    </div>
+
+  </div>
+</main>

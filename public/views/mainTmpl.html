@@ -1,0 +1,23 @@
+<main>
+  <navbar-dir></navbar-dir>
+
+  <div class="product-card-container">
+
+
+
+    <div class="product-card" ng-repeat="product in products">
+      <div class="product-card-info">
+
+        <img ng-src="{{ product.image }}"></img> <br/>
+        {{ product.name }} <br/>
+        {{ product.description }} <br/>
+        ${{ product.price }}
+
+      </div>
+        <button type="button" ng-click="addItemToCard(product)">Add to Cart</button>
+      </div>
+    </div>
+
+
+  </div>
+</main>

@@ -1,90 +1,82 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var mongojs = require('mongojs');
+var mongoose = require('mongoose');
+var Product = require('./Products.js');
 
 var app = express();
-app.use(cors());
-app.use(bodyParser.json());
 var port = 8000;
 
-var db = mongojs('ecommerce', ['products']);
-var productsCollection = db.collection('products');
-var ObjectID = mongojs.ObjectId;
+mongoose.connect('mongodb://localhost/api/products');
+
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.static(__dirname + '/public'));
 
 app.get('/api/products', function(req, res, next) {
-  var query = req.query;
-  productsCollection.find(query, function(error, response){
-    if(error) {
-      res.status(500).json(error);
+  Product.find({}, function(err, dbRes) {
+    if (err) {
+      res.status(500).send(err);
     }
     else {
-      res.json(response);
+      res.status(200).send(dbRes);
     }
   });
 });
 
 app.get('/api/products/:id', function(req, res, next) {
-  var objId = {
-    "_id": ObjectID(req.params.id)
-  };
-  productsCollection.findOne(objId, function(error, response){
-    if(error) {
-      return res.status(500).json(error);
+  var objId = req.params.id;
+  Product.findById(objId, function(err, dbRes) {
+    if (err) {
+      res.status(500).send(err);
     }
     else {
-      return res.json(response);
+      res.send(dbRes);
     }
   });
 });
 
 app.post('/api/products', function(req, res, next) {
-  productsCollection.save(req.body, function(error, response) {
-    if (error) {
-      return res.status(500).json(error);
+  Product.create(req.body, function(error, dbRes) {
+    if(error) {
+      res.status(500).send(error);
     }
     else {
-      return res.json(response);
+      res.send(dbRes);
     }
   });
+  // var product = new Product(req.body);
+  // product.save(function(error, s) {
+  //   if(error) {
+  //     res.status(500).send(error);
+  //   }
+  //   else {
+  //     res.send(s);
+  //   }
+  // });
 });
 
 app.put('/api/products/:id', function(req, res, next) {
-  console.log('put works, thats it');
-  console.log(req.params.id);
-  if(!req.params.id) {
-    console.log('no id entered');
-    return res.status(400).send('id query needed');
-  }
-  var queryObj = {
-    "_id": ObjectID(req.params.id)
-  };
-  productsCollection.update(queryObj, req.body, function(error, response){
-    console.log('inside the update');
+  console.log(req.body);
+  var objId = req.params.id;
+  Product.findByIdAndUpdate(objId, req.body, function(error, dbRes) {
     if(error) {
-      return res.status(500).json(error);
+      res.status(500).send(error);
     }
     else {
-      console.log('mission accomplished');
-      return res.json(response);
+      res.send(dbRes);
     }
   });
 });
 
 app.delete('/api/products/:id', function(req, res, next) {
-  if(!req.params.id) {
-    console.log('no id entered');
-    return res.status(400).send('id query needed');
-  }
-  var queryObj = {
-    "_id": ObjectID(req.params.id)
-  };
-  productsCollection.remove(queryObj, function(error, response){
+  var objId = req.params.id;
+  Product.findByIdAndRemove(objId, function(error, dbRes) {
     if(error) {
-      return res.status(500).json(error);
+      res.status(500).send(error);
     }
     else {
-      return res.json(response);
+      res.send('Successfully Deleted');
     }
   });
 });
